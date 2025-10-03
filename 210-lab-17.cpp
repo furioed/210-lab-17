@@ -1,114 +1,64 @@
+// COMSC-210 | Lab 17 | Mamadou Sissoko
+// IDE used: Visual Studio Code
+// Modularized linked list with functions for add, insert, delete, and destroy
+
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
-const int SIZE = 7;  
-
 struct Node {
-    float value;
-    Node *next;
+    int value;     // holds data for each node
+    Node* next;    // pointer to next node
 };
 
-void output(Node *);
+// function prototypes
+void addToFront(Node*& head, int val);  // add new node at front
+void output(Node* head);                // display linked list
+void deleteList(Node*& head);           // delete entire linked list
 
 int main() {
-    Node *head = nullptr;
-    int count = 0;
+    srand(time(0));
+    Node* head = nullptr;  // pointer to first node
 
-    // create a linked list of size SIZE with random numbers 0-99
-    for (int i = 0; i < SIZE; i++) {
-        int tmp_val = rand() % 100;
-        Node *newVal = new Node;
-        
-        // adds node at head
-        if (!head) { // if this is the first node, it's the new head
-            head = newVal;
-            newVal->next = nullptr;
-            newVal->value = tmp_val;
-        }
-        else { // its a second or subsequent node; place at the head
-            newVal->next = head;
-            newVal->value = tmp_val;
-            head = newVal;
-        }
+    // create a linked list of size 7 with random numbers 0-99
+    for (int i = 0; i < 7; i++) {
+        addToFront(head, rand() % 100); // add each new random value at the front
     }
-    output(head);
 
-    // deleting a node
-    Node * current = head;
-    cout << "Which node to delete? " << endl;
-    output(head);
-    int entry;
-    cout << "Choice --> ";
-    cin >> entry;
+    cout << "Initial list" << endl;
+    output(head); // display all nodes
 
-    // traverse that many times and delete that node
-    current = head;
-    Node *prev = head;
-    for (int i = 0; i < (entry-1); i++)
-        if (i == 0)
-            current = current->next;
-        else {
-            current = current->next;
-            prev = prev->next;
-        }
-    // at this point, delete current and reroute pointers
-    if (current) {  // checks for current to be valid before deleting the node
-        prev->next = current->next;
-        delete current;
-        current = nullptr;
-    }
-    output(head);
+    // delete the entire linked list
+    deleteList(head); // remove all nodes and free memory
 
-    // insert a node
-    current = head;
-    cout << "After which node to insert 10000? " << endl;
-    count = 1;
-    while (current) {
-        cout << "[" << count++ << "] " << current->value << endl;
-        current = current->next;
-    }
-    cout << "Choice --> ";
-    cin >> entry;
-
-    current = head;
-    prev = head;
-    for (int i = 0; i < (entry); i++)
-        if (i == 0)
-            current = current->next;
-        else {
-            current = current->next;
-            prev = prev->next;
-        }
-    //at this point, insert a node between prev and current
-    Node * newnode = new Node;
-    newnode->value = 10000;
-    newnode->next = current;
-    prev->next = newnode;
-    output(head);
-
-    // deleting the linked list
-    current = head;
-    while (current) {
-        head = current->next;
-        delete current;
-        current = head;
-    }
-    head = nullptr;
-    output(head);
+    cout << "Empty list." << endl; // indicate that list is now empty
 
     return 0;
 }
 
-void output(Node * hd) {
-    if (!hd) {
-        cout << "Empty list.\n";
-        return;
-    }
+// add a node at the front of the linked list
+void addToFront(Node*& head, int val) {
+    Node* newNode = new Node{val, head}; // create new node pointing to current head
+    head = newNode;                       // update head to new node
+}
+
+// display the linked list
+void output(Node* head) {
+    if (!head) return; // nothing to display
     int count = 1;
-    Node * current = hd;
-    while (current) {
-        cout << "[" << count++ << "] " << current->value << endl;
-        current = current->next;
+    while (head) {
+        cout << "[" << count++ << "] " << head->value << endl; // show value with position
+        head = head->next;
     }
-    cout << endl;
+}
+
+// delete every node in the linked list
+void deleteList(Node*& head) {
+    Node* temp;
+    while (head) {
+        temp = head;       // store current node
+        head = head->next; // move head forward
+        delete temp;       // free memory
+    }
 }
